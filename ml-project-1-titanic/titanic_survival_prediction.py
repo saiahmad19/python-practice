@@ -5,6 +5,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score
+
 
 titanic = sns.load_dataset("titanic")
 titanic = titanic.drop(columns=["deck", "class", "embark_town", "alive", "who", "adult_male"])
@@ -53,3 +56,18 @@ new_passenger = pd.DataFrame({
 })
 prediction = log_model.predict(new_passenger)
 print("Prediction for hypothetical passenger (1=survived, 0=did not):", prediction)
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+log_model_scaled = LogisticRegression(max_iter=1000)
+log_model_scaled.fit(X_train_scaled, y_train)
+scaled_predictions = log_model_scaled.predict(X_test_scaled)
+scaled_accuracy = accuracy_score(y_test, scaled_predictions)
+print("Logistic Regression accuracy (scaled):", scaled_accuracy)
+
+log_model_cv = LogisticRegression(max_iter=1000)
+scores = cross_val_score(log_model_cv, X, y, cv=5)
+print("Cross-validation scores (5-fold):", scores)
+print("Cross-validation mean accuracy:", scores.mean())
