@@ -37,12 +37,18 @@ Random Forest performed best. A single Decision Tree performed slightly worse th
 
 The trained Logistic Regression model was also tested on one made-up passenger: a 29-year-old, first-class, female passenger traveling alone, boarded at Southampton. The model predicted survival (1), which matches well-documented Titanic history (women and higher-class passengers had substantially higher survival rates). The model was never given any historical information directly - this prediction came purely from patterns in the numbers, which is good independent evidence it learned something real rather than noise.
 
-## What I'd do differently / next
+## Feature scaling and cross-validation (tested)
 
-- Try scaling the numeric features (e.g. fare, age), since Logistic Regression can be sensitive to features on very different numeric scales, and this wasn't done here.
-- Test a few different random_state values to check how much the exact accuracy numbers depend on which specific passengers ended up in the test set, rather than trusting a single split.
-- Try this same pipeline on a dataset from a personal interest area (e.g. customer retention data) now that the core workflow - clean, split, train, evaluate, compare models - is solid.
+Two follow-up questions from the initial version were directly tested rather than left as open suggestions:
+
+- **Feature scaling:** applied StandardScaler (mean 0, std 1) to all features and retrained Logistic Regression. Result: 79.9% accuracy, identical to the unscaled version to the full decimal. Likely explanation: raising max_iter to 1000 (to fix a convergence warning) had already let the model fully train regardless of feature scale, which is one of the main problems scaling usually solves. For this dataset and model, scaling made no measurable difference.
+- **Cross-validation:** ran 5-fold cross-validation on Logistic Regression across the full dataset (not just one train/test split). Individual fold scores: 77.7%, 77.0%, 79.8%, 78.7%, 83.1% (mean: 79.2%). This is close to the original single-split result (79.9%) and reasonably consistent across folds, which is evidence the original result reflects a stable, real pattern rather than a lucky or unlucky single split.
+
+## What I'd do next
+
+- Try this same pipeline on a dataset from a personal interest area (e.g. customer retention data), now that the core workflow - clean, split, train, evaluate, compare models, validate with cross-validation - is solid.
+- Try scaling on the tree-based models too, and compare against a non-linear model type to see if Logistic Regression's roughly-straight-line decision boundary is actually the limiting factor on accuracy here.
 
 ## Tools used
 
-Python, pandas, seaborn (for the dataset), scikit-learn (LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, train_test_split, accuracy_score).
+Python, pandas, seaborn (for the dataset), scikit-learn (LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, train_test_split, accuracy_score, StandardScaler, cross_val_score).
