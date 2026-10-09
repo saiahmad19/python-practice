@@ -1,0 +1,6 @@
+venv/
+CB-prac/
+titanic.db
+.env
+__pycache__/
+.DS_Store

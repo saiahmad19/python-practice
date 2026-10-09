@@ -1,17 +1,11 @@
-def f_p_g(grades, threshold):
-    numbers = []
-    for number in grades:
-        if number > threshold:
-            numbers.append(number)
-    return numbers
+counts = {}
 
+for die1 in range(1, 7):
+    for die2 in range(1, 7):
+        total = die1 + die2
+        if total in counts:
+            counts[total] = counts[total] + 1
+        else:
+            counts[total] = 1
 
-a = [10, 20, 30, 70, 90]
-b = [50, 70, 40, 90, 67]
-
-print(f_p_g(a, 50))
-print(f_p_g(b, 50))
-
-
-
-        
+print(counts)
