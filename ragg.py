@@ -9,22 +9,22 @@ load_dotenv()
 my_key = os.environ.get("GROQ_API_KEY")
 client = Groq(api_key=my_key)
 
-text = "Python variables store data. Functions return values. Classes bundle data and behavior. Loops repeat actions. Dictionaries store key-value pairs."
+with open("notes.txt") as f:
+    text = f.read()
 
-
-def chunk_by_sentence(text):
-    sentences = text.split(".")
+def chunk_by_section(text):
     chunks = []
-    for sentence in sentences:
-        sentence = sentence.strip()
-        if sentence:
-            chunks.append(sentence)
+    for section in text.split("\n## "):
+        section = section.strip()
+        if section:
+            chunks.append(section)
     return chunks
 
 
-result = chunk_by_sentence(text)
+result = chunk_by_section(text)
+
 if SHOW_STEPS:
-    print("PAGES:", result)
+    print("NUMBER OF PAGES:", len(result))
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 embeddings = model.encode(result)
@@ -45,7 +45,7 @@ def ask(question):
     if SHOW_STEPS:
         print("WINNING PAGE:", result[best_index])
 
-    prompt = f"""Use the information below to answer the question. If it contains the answer, base your answer on it. If it doesn't, start with "That's not in my notes," then give a short answer from your own knowledge.
+        prompt = f"""The information below comes from the user's notes about a clothing brand called APHRODITE GEAR. Use it to answer the question. If it contains the answer, base your answer on it. If it doesn't, start with "That's not in my notes," then give a short answer from your own knowledge.
 
 Information: {result[best_index]}
 
